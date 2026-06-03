@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ Проблемы с интернетом</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .error-glow {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .fake-router {
+            background: linear-gradient(145deg, #1f2937, #111827);
+        }
+
+        .status-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .prank-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <!-- Header -->
+        <div class="flex items-center justify-center gap-x-3 mb-8">
+            <div class="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-wifi text-3xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-semibold tracking-tight">Интернет</h1>
+                <p class="text-red-400 text-sm font-medium">СБОЙ ПОДКЛЮЧЕНИЯ</p>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl prank-card error-glow">
+            
+            <!-- Error Message -->
+            <div class="flex items-start gap-x-4 mb-8">
+                <div class="flex-shrink-0 w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center mt-0.5">
+                    <i class="fa-solid fa-exclamation-triangle text-red-500 text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl font-semibold leading-tight">У вас проблемы с интернетом</h2>
+                    <p class="text-zinc-400 mt-1.5 text-[15px]">Наш диагностический инструмент обнаружил ошибку подключения. Для автоматического восстановления введите данные ниже.</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="jokeForm" class="space-y-5">
+                <!-- Name Field -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">Введите название</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-tag text-zinc-500"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="nameInput"
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-red-500 transition-colors text-white placeholder-zinc-500 rounded-2xl py-3.5 pl-11 pr-4 outline-none"
+                            placeholder="Название устройства / имя"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">Пароль</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-zinc-500"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="passInput"
+                            class="w-full bg-zinc-950 border border-zinc-700 focus:border-red-500 transition-colors text-white placeholder-zinc-500 rounded-2xl py-3.5 pl-11 pr-4 outline-none"
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+                    <p class="text-[10px] text-zinc-500 mt-1.5 px-1">Пароль от роутера / аккаунта</p>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit"
+                    class="w-full mt-2 bg-red-600 hover:bg-red-500 active:bg-red-700 transition-all text-white font-semibold py-4 rounded-2xl flex items-center justify-center gap-x-2 text-[15px] shadow-lg shadow-red-600/30"
+                >
+                    <i class="fa-solid fa-save mr-2"></i>
+                    <span>Сохранить и восстановить подключение</span>
+                </button>
+            </form>
+
+            <!-- Result Area -->
+            <div id="resultArea" class="hidden mt-6 p-5 bg-zinc-950 border border-zinc-800 rounded-2xl">
+                <div class="flex items-center gap-x-3">
+                    <div id="resultIcon" class="flex-shrink-0"></div>
+                    <div class="flex-1" id="resultText"></div>
+                </div>
+            </div>
+
+            <!-- Footer joke -->
+            <div class="mt-8 pt-6 border-t border-zinc-800 text-center">
+                <p class="text-xs text-zinc-500 flex items-center justify-center gap-x-1.5">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <span>Это безопасная первоапрельская шутка</span>
+                </p>
+            </div>
+        </div>
+
+        <p class="text-center text-[10px] text-zinc-600 mt-6">Только для друзей • 1 апреля (и не только)</p>
+    </div>
+
+    <script>
+        // Tailwind script
+        function initializeTailwind() {
+            document.documentElement.style.setProperty('--accent', '#ef4444');
+        }
+
+        // Main joke logic
+        document.getElementById('jokeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('nameInput').value.trim();
+            const pass = document.getElementById('passInput').value;
+            const resultArea = document.getElementById('resultArea');
+            const resultText = document.getElementById('resultText');
+            const resultIcon = document.getElementById('resultIcon');
+            const submitBtn = e.target.querySelector('button');
+
+            // Disable form during "processing"
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+                <span>Подключение к серверу...</span>
+            `;
+
+            // Fake loading delay (makes it funnier)
+            setTimeout(() => {
+                // Clear previous result
+                resultArea.classList.remove('hidden');
+                resultArea.classList.add('border-red-500/30', 'bg-red-950/30');
+
+                // Show the joke reveal
+                resultIcon.innerHTML = `
+                    <div class="w-9 h-9 bg-yellow-500 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-grin-beam text-white text-2xl"></i>
+                    </div>
+                `;
+                
+                resultText.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-yellow-400 text-lg">ХА-ХА! Это была первоапрельская шутка! 🎉</p>
+                        <p class="text-sm text-zinc-300 mt-1">Никакие данные не были сохранены. Ваш пароль остался в тайне.</p>
+                        <div class="mt-3 text-xs bg-zinc-900 border border-zinc-700 rounded-xl p-3 font-mono text-emerald-400">
+                            <div>✓ Имя: <span class="text-white">${name || '—'}</span></div>
+                            <div>✓ Пароль: <span class="text-white">${'*'.repeat(Math.min(pass.length, 12)) || '—'}</span></div>
+                            <div class="mt-1 text-[10px] text-zinc-500">Всё это осталось только в твоём браузере</div>
+                        </div>
+                        <button onclick="resetPrank()" 
+                                class="mt-4 text-xs px-4 py-2 bg-white/10 hover:bg-white/20 transition-colors rounded-xl text-white flex items-center gap-x-2 text-[13px]">
+                            <i class="fa-solid fa-redo"></i>
+                            <span>Повторить шутку</span>
+                        </button>
+                    </div>
+                `;
+
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <i class="fa-solid fa-redo mr-2"></i>
+                    <span>Сохранить ещё раз (шутка)</span>
+                `;
+
+                // Optional: save to localStorage as fake "history" for extra fun
+                try {
+                    const history = JSON.parse(localStorage.getItem('aprilFoolsHistory') || '[]');
+                    history.unshift({
+                        name: name,
+                        time: new Date().toLocaleTimeString('ru-RU'),
+                        date: new Date().toLocaleDateString('ru-RU')
+                    });
+                    localStorage.setItem('aprilFoolsHistory', JSON.stringify(history.slice(0, 5)));
+                } catch(e) {}
+                
+            }, 1450); // realistic "server" delay
+        });
+
+        function resetPrank() {
+            const resultArea = document.getElementById('resultArea');
+            const form = document.getElementById('jokeForm');
+            
+            resultArea.classList.add('hidden');
+            resultArea.classList.remove('border-red-500/30', 'bg-red-950/30');
+            
+            // Clear inputs
+            form.reset();
+            
+            // Reset button text
+            const btn = form.querySelector('button');
+            btn.innerHTML = `
+                <i class="fa-solid fa-save mr-2"></i>
+                <span>Сохранить и восстановить подключение</span>
+            `;
+        }
+
+        // Easter egg: press "f" for fun mode
+        document.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 'f' && document.activeElement.tagName === 'BODY') {
+                const card = document.querySelector('.prank-card');
+                card.style.transform = 'rotate(2deg)';
+                setTimeout(() => {
+                    card.style.transform = 'rotate(0deg)';
+                }, 600);
+            }
+        });
+
+        // Initialize
+        initializeTailwind();
+        
+        // Console hint for the curious
+        console.log('%c[Шутка] Это первоапрельская страница. Никакие данные никуда не уходят. Всё остаётся в браузере.', 'color:#64748b; font-size:10px');
+    </script>
+</body>
+</html>
